@@ -94,6 +94,8 @@ module.exports = function (token, options, cb) {
     issue.title = body.title
     issue.created_by = body.user.login || body.head.user.login
     issue.created_at = new Date(body.created_at).toLocaleDateString()
+    issue.updated_at = new Date(body.updated_at).toLocaleDateString()
+    issue.labels = []
     issue.body = body.body
     issue.state = body.state
     issue.comments = []
@@ -103,6 +105,11 @@ module.exports = function (token, options, cb) {
     if (repo.issue === 'all') {
       issue.quicklink = repo.full + '#' + body.html_url.split('/').pop()
     } else issue.quicklink = repo.full
+
+    body.labels.forEach(function(label) {
+      issue.labels.push(label.name)
+    })
+    issue.labels = "[" + issue.labels.join(",") + "]"
 
     getComments(issue, repo, cb)
   }
