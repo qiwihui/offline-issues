@@ -6,10 +6,15 @@ var mkdirp = require('mkdirp')
 
 module.exports = function writemarkdown (options, cb) {
   if (options.destination) {
-    var dest = path.resolve(options.destination, 'md')
+    var dest = path.resolve(options.destination)
   } else {
     var dest = 'md'
   }
+  var markdownTemplate = 'markdown'
+  if (options.template) {
+    markdownTemplate = options.template
+  }
+  var templateFile = markdownTemplate + ".hbs"
 
   mkdirp(dest, function (err) {
     if (err) return cb(err, 'Error creating md directory.')
@@ -19,7 +24,7 @@ module.exports = function writemarkdown (options, cb) {
   issues = JSON.parse(issues)
   issues.forEach(function (issue) {
     var filename = repoDetails(issue.url)
-    var source = fs.readFileSync(path.join(__dirname, '/templates/markdown.hbs'))
+    var source = fs.readFileSync(path.join(__dirname, '/templates/', templateFile))
     var template = handlebars.compile(source.toString())
     var result = template(issue)
 

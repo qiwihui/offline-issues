@@ -140,8 +140,17 @@ module.exports = function (token, options, cb) {
 
     fs.writeFile('comments.json', data, function (err) {
       if (err) return cb(err, 'Error in writing data file.')
-      writemarkdown(options, cb)
-      writehtml(options, cb)
+      switch (options.type){
+        case "markdown":
+          writemarkdown(options, cb)
+          break
+        case "html":
+          writehtml(options, cb)
+          break
+        default:
+          writemarkdown(options, cb)
+          writehtml(options, cb)
+      }
     })
   }
 }

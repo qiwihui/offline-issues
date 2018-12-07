@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var ghauth = require('ghauth')
+// var ghauth = require('ghauth')
 var getIssues = require('./index.js')
 
 var options = require('yargs')
@@ -25,6 +25,24 @@ var options = require('yargs')
     choices: ['open', 'closed', 'all'],
     default: 'open'
   })
+  .option('username', {
+    alias: 'u',
+    describe: 'Github username',
+  })
+  .option('password', {
+    alias: 'p',
+    describe: 'Github access token',
+  })
+  .option('template', {
+    alias: 't',
+    describe: 'template name',
+  })
+  .option('type', {
+    alias: 'c',
+    describe: 'output type',
+    choices: ['markdown', 'html', 'all'],
+    default: 'all'
+  })
   .help('help')
   .argv
 
@@ -34,13 +52,12 @@ var ghAuthOptions = {
   note: 'This token is for the offline-issues module from NPM' // (optional) saved with the token on GitHub
 }
 
-ghauth(ghAuthOptions, function (err, token) {
-  if (err) console.log(err)
-  getIssues(token, options, function (err, message) {
-    if (err) console.log(err, message)
-    console.log(message)
-  })
+var token = {
+  user: options.username,
+  token: options.password
+}
 
-  // var token = { user: 'username',
-  // token: 'TOKEN' }
+getIssues(token, options, function (err, message) {
+  if (err) console.log(err, message)
+  console.log(message)
 })
