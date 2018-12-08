@@ -101,6 +101,7 @@ module.exports = function (token, options, cb) {
     issue.comments = []
     issue.comments_url = body.comments_url
     issue.milestone = body.milestone ? body.milestone.title : null
+    issue.number = body.number // issue id
 
     if (repo.issue === 'all') {
       issue.quicklink = repo.full + '#' + body.html_url.split('/').pop()
