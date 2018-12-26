@@ -112,7 +112,10 @@ module.exports = function (token, options, cb) {
     })
     issue.labels = "[" + issue.labels.join(",") + "]"
 
-    getComments(issue, repo, cb)
+    // created by the user
+    if (issue.created_by == repo.user) {
+      getComments(issue, repo, cb)
+    }
   }
 
   function getComments (issue, repo, cb) {
