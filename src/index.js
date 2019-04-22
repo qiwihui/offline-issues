@@ -112,8 +112,8 @@ module.exports = function (token, options, cb) {
     })
     issue.labels = "[" + issue.labels.join(",") + "]"
 
-    // created by the user and label without 'TODO' 
-    if (issue.created_by == repo.user && issue.labels.indexOf("TODO") == -1) {
+    // created by the user
+    if (issue.created_by == repo.user) {
       getComments(issue, repo, cb)
     }
   }
