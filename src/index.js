@@ -77,7 +77,10 @@ module.exports = function (token, options, cb) {
         return
       } else {
         if (body.message) return cb(null, body)
-        body.forEach(function (issue) {
+        body.filter(function (issue) {
+          // filter issue with TODO label
+          return !issue.labels.some(e => e.name === "TODO")
+        }).forEach(function (issue) {
           return allIssues.push(issue)
         })
         pagenum++
