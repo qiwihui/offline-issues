@@ -2,6 +2,8 @@ var fs = require('fs')
 
 var request = require('request')
 
+var htmlencode = require('htmlencode');
+
 var runParallel = require('run-parallel')
 var writemarkdown = require('./writemarkdown.js')
 var writehtml = require('./writehtml.js')
@@ -94,7 +96,7 @@ module.exports = function (token, options, cb) {
 
     issue.id = body.id
     issue.url = body.html_url
-    issue.title = body.title
+    issue.title = htmlencode.htmlEncode(body.title)
     issue.created_by = body.user.login || body.head.user.login
     issue.created_at = new Date(body.created_at).toLocaleString('en-GB')
     issue.updated_at = new Date(body.updated_at).toLocaleString('en-GB')
