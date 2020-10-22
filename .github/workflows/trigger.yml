@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - custom
+      - ghtoken
 
 name: 触发博客构建
 
