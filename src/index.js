@@ -65,7 +65,7 @@ module.exports = function (token, options, cb) {
     var limit = '&per_page=100'
     var labels = ''
     if (repo.labels != '') {
-      var labels = '&labels=' + repo.labels
+      var labels = '&labels=' + options.labels
     }
     var url = base + '/repos/' + repo.user + '/' + repo.name + query + pagenum + limit + labels
     request(url, { json: true, headers: headers }, function (err, resp, body) {
