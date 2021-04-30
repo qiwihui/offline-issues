@@ -25,6 +25,10 @@ var options = require('yargs')
     choices: ['open', 'closed', 'all'],
     default: 'open'
   })
+  .option('labels', {
+    alias: 'l',
+    describe: 'Filter by labels',
+  })
   .option('username', {
     alias: 'u',
     describe: 'Github username',

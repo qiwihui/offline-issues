@@ -7,7 +7,7 @@ var writemarkdown = require('./writemarkdown.js')
 var writehtml = require('./writehtml.js')
 
 var base = 'https://api.github.com'
-var headers = {'user-agent': 'offline-issues module'}
+var headers = { 'user-agent': 'offline-issues module' }
 
 module.exports = function (token, options, cb) {
   var issueData = []
@@ -21,7 +21,7 @@ module.exports = function (token, options, cb) {
   if (options._.length === 0) return cb(null, 'No repository given.')
   parseRepo(options, cb)
 
-  function parseRepo (options, cb) {
+  function parseRepo(options, cb) {
     options.repos = []
 
     options._.forEach(function (repo) {
@@ -51,7 +51,7 @@ module.exports = function (token, options, cb) {
     })
   }
 
-  function getIssues (repo, cb) {
+  function getIssues(repo, cb) {
     if (repo.issue === 'all') return theRequestLoop(repo, cb)
     var url = base + '/repos/' + repo.user + '/' + repo.name + '/issues/' + repo.issue
     request(url, { json: true, headers: headers }, function (err, resp, body) {
@@ -60,10 +60,14 @@ module.exports = function (token, options, cb) {
     })
   }
 
-  function theRequestLoop (repo, cb) {
+  function theRequestLoop(repo, cb) {
     var query = '/issues?state=' + repo.state + '&page='
     var limit = '&per_page=100'
-    var url = base + '/repos/' + repo.user + '/' + repo.name + query + pagenum + limit
+    var labels = ''
+    if (repo.labels != '') {
+      var labels = '&labels=' + repo.labels
+    }
+    var url = base + '/repos/' + repo.user + '/' + repo.name + query + pagenum + limit + labels
     request(url, { json: true, headers: headers }, function (err, resp, body) {
       if (err) return cb(err, 'Error in request for issue.')
       if (body.message) return cb(null, body)
@@ -89,7 +93,7 @@ module.exports = function (token, options, cb) {
     })
   }
 
-  function loadIssue (body, repo, cb) {
+  function loadIssue(body, repo, cb) {
     var issue = {}
 
     issue.id = body.id
@@ -110,10 +114,10 @@ module.exports = function (token, options, cb) {
       issue.quicklink = repo.full + '#' + body.html_url.split('/').pop()
     } else issue.quicklink = repo.full
 
-    body.labels.forEach(function(label) {
+    body.labels.forEach(function (label) {
       issue.labels.push(label.name)
     })
-    issue.labels = "[" + issue.labels.join(",") + "]"
+    issue.labels = "\n- " + issue.labels.join("\n- ")
 
     // created by the user
     if (issue.created_by == repo.user) {
@@ -121,7 +125,7 @@ module.exports = function (token, options, cb) {
     }
   }
 
-  function getComments (issue, repo, cb) {
+  function getComments(issue, repo, cb) {
     var url = ''
     if (repo.issue === 'all') {
       url = issue.comments_url
@@ -130,7 +134,6 @@ module.exports = function (token, options, cb) {
     }
     request(url, { json: true, headers: headers }, function (err, resp, body) {
       if (err) return cb(err, 'Error in request for comments.')
-
       issue.comments = body
       issue.comments.forEach(function (comment) {
         comment.created_at = new Date(comment.created_at).toLocaleDateString()
@@ -140,7 +143,7 @@ module.exports = function (token, options, cb) {
     })
   }
 
-  function writeData (options, cb) {
+  function writeData(options, cb) {
     var data = JSON.stringify(issueData, null, ' ')
     var count = JSON.parse(data).length
 
@@ -154,7 +157,7 @@ module.exports = function (token, options, cb) {
 
     fs.writeFile('comments.json', data, function (err) {
       if (err) return cb(err, 'Error in writing data file.')
-      switch (options.type){
+      switch (options.type) {
         case "markdown":
           writemarkdown(options, cb)
           break
